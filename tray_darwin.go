@@ -4,7 +4,7 @@ package main
 #cgo LDFLAGS: -framework Cocoa
 #include <stdlib.h>
 
-void trayInit(const unsigned char* png, int pngLen);
+void trayInit(const unsigned char* png, int pngLen, const char* tooltip);
 void trayUpdateHistory(const char** titles, int count);
 */
 import "C"
@@ -47,7 +47,9 @@ func goTrayCallback(tag C.int) {
 
 func (a *App) setupTray() {
 	_trayApp = a
-	C.trayInit((*C.uchar)(unsafe.Pointer(&icon[0])), C.int(len(icon)))
+	tooltip := C.CString("daktela-gui-tools " + version)
+	defer C.free(unsafe.Pointer(tooltip))
+	C.trayInit((*C.uchar)(unsafe.Pointer(&icon[0])), C.int(len(icon)), tooltip)
 
 	a.trayUpdate = func() {
 		history := a.mountHistory

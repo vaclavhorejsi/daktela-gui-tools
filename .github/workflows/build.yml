@@ -32,7 +32,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -o daktela-gui-tools
+        run: wails build -ldflags "-X 'main.version=${{ github.ref_name }}-$(git rev-parse --short HEAD)'" -o daktela-gui-tools
 
       - uses: actions/upload-artifact@v4
         with:
@@ -63,7 +63,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -tags webkit2_41 -o daktela-gui-tools-wayland
+        run: wails build -tags webkit2_41 -ldflags "-X 'main.version=${{ github.ref_name }}-$(git rev-parse --short HEAD)'" -o daktela-gui-tools-wayland
 
       - uses: actions/upload-artifact@v4
         with:
@@ -89,7 +89,7 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -o daktela-gui-tools-darwin
+        run: wails build -ldflags "-X 'main.version=${{ github.ref_name }}-$(git rev-parse --short HEAD)'" -o daktela-gui-tools-darwin
 
       - name: Zip app bundle
         run: ditto -c -k --keepParent build/bin/daktela-gui-tools.app build/bin/daktela-gui-tools-darwin.zip

@@ -7,7 +7,11 @@ export function ExecuteConnect(arg1:string):Promise<void>;
 
 export function ExecuteMount(arg1:string):Promise<void>;
 
+export function GetCustomers():Promise<Array<string>>;
+
 export function GetMountHistory():Promise<Array<string>>;
+
+export function GetVersion():Promise<string>;
 
 export function HideWindow():Promise<void>;
 

@@ -242,7 +242,7 @@ func (a *App) runTray() {
 		sniIface: {
 			"Category":   {Value: "ApplicationStatus", Writable: false, Emit: prop.EmitTrue},
 			"Id":         {Value: svcName, Writable: false, Emit: prop.EmitTrue},
-			"Title":      {Value: "Mountly", Writable: false, Emit: prop.EmitTrue},
+			"Title":      {Value: "daktela-gui-tools " + version, Writable: false, Emit: prop.EmitTrue},
 			"Status":     {Value: "Active", Writable: false, Emit: prop.EmitTrue},
 			"IconName":   {Value: "utilities-terminal", Writable: false, Emit: prop.EmitTrue},
 			"Menu":       {Value: menuPath, Writable: false, Emit: prop.EmitTrue},

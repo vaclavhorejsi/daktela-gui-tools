@@ -17,7 +17,7 @@ static TrayTarget* _target;
 static NSStatusItem* _statusItem;
 static NSMutableArray<NSMenuItem*>* _historyItems;
 
-void trayInit(const unsigned char* png, int pngLen) {
+void trayInit(const unsigned char* png, int pngLen, const char* tooltip) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		_target = [TrayTarget new];
 		_historyItems = [NSMutableArray array];
@@ -29,7 +29,7 @@ void trayInit(const unsigned char* png, int pngLen) {
 		img.size = NSMakeSize(18, 18);
 		img.template = YES;
 		_statusItem.button.image = img;
-		_statusItem.button.toolTip = @"Mountly";
+		_statusItem.button.toolTip = [NSString stringWithUTF8String:tooltip];
 
 		NSMenu* m = [NSMenu new];
 

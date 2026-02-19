@@ -14,8 +14,16 @@ export function ExecuteMount(arg1) {
   return window['go']['main']['App']['ExecuteMount'](arg1);
 }
 
+export function GetCustomers() {
+  return window['go']['main']['App']['GetCustomers']();
+}
+
 export function GetMountHistory() {
   return window['go']['main']['App']['GetMountHistory']();
+}
+
+export function GetVersion() {
+  return window['go']['main']['App']['GetVersion']();
 }
 
 export function HideWindow() {

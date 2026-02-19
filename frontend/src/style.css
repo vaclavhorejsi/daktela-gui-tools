@@ -115,10 +115,17 @@ button {
     padding: 20px;
 }
 
-#page-mount h3 {
+#page-mount h3,
+#page-connect h3 {
     font-size: 15px;
     font-weight: 600;
     color: #e0e0e0;
+}
+
+.version-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: -8px;
 }
 
 .mount-input-wrap {
@@ -207,12 +214,6 @@ button {
     flex-direction: column;
     gap: 12px;
     padding: 20px;
-}
-
-#page-connect h3 {
-    font-size: 15px;
-    font-weight: 600;
-    color: #e0e0e0;
 }
 
 #btn-connect {

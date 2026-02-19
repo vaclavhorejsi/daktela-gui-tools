@@ -1,5 +1,9 @@
 import './style.css';
-import {ExecuteCommand, HideWindow, GetMountHistory, GetCustomers, SaveMount, RunMount, ExecuteConnect} from '../wailsjs/go/main/App';
+import {ExecuteCommand, HideWindow, GetMountHistory, GetCustomers, GetVersion, SaveMount, RunMount, ExecuteConnect} from '../wailsjs/go/main/App';
+
+GetVersion().then(v => {
+    document.querySelectorAll('.version-label').forEach(el => el.textContent = v);
+});
 
 document.querySelector('#app').innerHTML = `
     <div class="container" id="page-execute">
@@ -14,6 +18,7 @@ document.querySelector('#app').innerHTML = `
     </div>
     <div id="page-mount">
         <h3>Mount</h3>
+        <span class="version-label"></span>
         <div class="mount-input-wrap">
             <input type="text" id="mount-input" placeholder="PBX name" autocomplete="off" spellcheck="false" />
             <div class="mount-suggestions" id="mount-suggestions"></div>
@@ -25,6 +30,7 @@ document.querySelector('#app').innerHTML = `
     </div>
     <div id="page-connect">
         <h3>Connect SSH</h3>
+        <span class="version-label"></span>
         <div class="mount-input-wrap">
             <input type="text" id="connect-input" placeholder="PBX name" autocomplete="off" spellcheck="false" />
             <div class="mount-suggestions" id="connect-suggestions"></div>
