@@ -113,7 +113,8 @@ On first launch, a configuration file is created automatically:
 ```json
 {
   "mount_base": "/home/user/Projects/Daktela",
-  "terminal": "gnome-terminal --"
+  "terminal": "gnome-terminal --",
+  "remote_mount_path": "/var/lib/daktela/custom"
 }
 ```
 
@@ -123,6 +124,7 @@ On first launch, a configuration file is created automatically:
 |-------|-------------|
 | `mount_base` | Local directory where server disks are mounted. Each server is mounted as a subdirectory — e.g. `mount_base/server-name`. |
 | `terminal` | Command used to open a terminal. The SSH command is appended as arguments after this string. |
+| `remote_mount_path` | Remote path on the server that is mounted via SSHFS. Defaults to `/var/lib/daktela/custom`. |
 
 ### `terminal` values by environment
 
@@ -173,9 +175,10 @@ After entering a server name (e.g. `customer`), the application:
 2. Creates the target directory: `mkdir -p ~/Projects/Daktela/customer`
 3. Mounts the remote directory via SSHFS:
    ```
-   sshfs root@customer.daktela.com:/var/lib/daktela/custom/ ~/Projects/Daktela/customer
+   sshfs root@customer.daktela.com:<remote_mount_path>/ ~/Projects/Daktela/customer
         -o ServerAliveInterval=10,ServerAliveCountMax=6
    ```
+   Where `<remote_mount_path>` is the value from `config.json` (default: `/var/lib/daktela/custom`).
 
 The output of all commands is displayed in the application window.
 

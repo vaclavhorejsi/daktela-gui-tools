@@ -127,7 +127,7 @@ func (a *App) listenHotkeyWayland() {
 	err = portal.Call(
 		"org.freedesktop.portal.GlobalShortcuts.CreateSession", 0,
 		map[string]dbus.Variant{
-			"session_handle_token": dbus.MakeVariant("mountlysession"),
+			"session_handle_token": dbus.MakeVariant("daktelasession"),
 		},
 	).Store(&createReqPath)
 	if err != nil {

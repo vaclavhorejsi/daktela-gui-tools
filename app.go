@@ -14,8 +14,9 @@ import (
 )
 
 type Config struct {
-	MountBase string `json:"mount_base"`
-	Terminal  string `json:"terminal"`
+	MountBase        string `json:"mount_base"`
+	Terminal         string `json:"terminal"`
+	RemoteMountPath  string `json:"remote_mount_path"`
 }
 
 type App struct {
@@ -51,7 +52,7 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // listenSocket naslouchá na Unix socketu — fallback pro GNOME Wayland.
-// GNOME custom shortcuts: mountly --show-mount / mountly --show-connect
+// GNOME custom shortcuts: daktela-gui-tools --show-mount / daktela-gui-tools --show-connect
 func (a *App) listenSocket() {
 	path := socketPath()
 	os.Remove(path)
@@ -97,8 +98,9 @@ func (a *App) configFilePath() string {
 func (a *App) loadConfig() {
 	home, _ := os.UserHomeDir()
 	a.config = Config{
-		MountBase: filepath.Join(home, "Projects", "Daktela"),
-		Terminal:  defaultTerminal,
+		MountBase:       filepath.Join(home, "Projects", "Daktela"),
+		Terminal:        defaultTerminal,
+		RemoteMountPath: "/var/lib/daktela/custom",
 	}
 	data, err := os.ReadFile(a.configFilePath())
 	if err != nil {
@@ -196,8 +198,9 @@ func (a *App) RunMount(name string) string {
 
 	run(unmountArgs(base)...)
 	run("mkdir", "-p", base)
+	remotePath := strings.TrimRight(a.config.RemoteMountPath, "/") + "/"
 	run("sshfs",
-		"root@"+name+".daktela.com:/var/lib/daktela/custom/",
+		"root@"+name+".daktela.com:"+remotePath,
 		base,
 		"-o", "ServerAliveInterval=10,ServerAliveCountMax=6")
 

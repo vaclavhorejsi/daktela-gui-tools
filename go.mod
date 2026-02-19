@@ -1,4 +1,4 @@
-module mountly
+module daktela-gui-tools
 
 go 1.23
 
