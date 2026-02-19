@@ -32,12 +32,12 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -o mountly
+        run: wails build -o daktela-gui-tools
 
       - uses: actions/upload-artifact@v4
         with:
-          name: mountly-linux-x11
-          path: build/bin/mountly
+          name: daktela-gui-tools-linux-x11
+          path: build/bin/daktela-gui-tools
 
   # ── Linux Wayland (WebKitGTK 4.1, Ubuntu 24.04) ───────────────────────────
   build-linux-wayland:
@@ -63,12 +63,12 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -tags webkit2_41 -o mountly-wayland
+        run: wails build -tags webkit2_41 -o daktela-gui-tools-wayland
 
       - uses: actions/upload-artifact@v4
         with:
-          name: mountly-linux-wayland
-          path: build/bin/mountly-wayland
+          name: daktela-gui-tools-linux-wayland
+          path: build/bin/daktela-gui-tools-wayland
 
   # ── macOS ──────────────────────────────────────────────────────────────────
   build-macos:
@@ -89,12 +89,12 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build
-        run: wails build -o mountly-darwin
+        run: wails build -o daktela-gui-tools-darwin
 
       - uses: actions/upload-artifact@v4
         with:
-          name: mountly-macos
-          path: build/bin/mountly-darwin
+          name: daktela-gui-tools-macos
+          path: build/bin/daktela-gui-tools-darwin
 
   # ── GitHub Release (jen při tagu v*) ──────────────────────────────────────
   release:
@@ -113,6 +113,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/mountly-linux-x11/mountly
-            artifacts/mountly-linux-wayland/mountly-wayland
-            artifacts/mountly-macos/mountly-darwin
+            artifacts/daktela-gui-tools-linux-x11/daktela-gui-tools
+            artifacts/daktela-gui-tools-linux-wayland/daktela-gui-tools-wayland
+            artifacts/daktela-gui-tools-macos/daktela-gui-tools-darwin

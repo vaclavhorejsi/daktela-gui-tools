@@ -54,36 +54,23 @@ func (a *App) onTrayReady() {
 	a.trayUpdate()
 
 	// Top-level buttons.
-	go func() {
-		for {
-			select {
-			case <-mConnect.ClickedCh:
-				go a.ShowConnectDialog()
-			case <-mMount.ClickedCh:
-				go a.ShowMountDialog()
-			case <-mExit.ClickedCh:
-				runtime.Quit(a.ctx)
-			}
-		}
-	}()
+	mConnect.Click(func() { go a.ShowConnectDialog() })
+	mMount.Click(func() { go a.ShowMountDialog() })
+	mExit.Click(func() { runtime.Quit(a.ctx) })
 
 	// History slot handlers.
 	for i := range slots {
 		i := i
 		slot := &slots[i]
-		go func() {
-			for {
-				select {
-				case <-slot.mount.ClickedCh:
-					if i < len(a.mountHistory) {
-						go a.ExecuteMount(a.mountHistory[i])
-					}
-				case <-slot.connect.ClickedCh:
-					if i < len(a.mountHistory) {
-						go a.ExecuteConnect(a.mountHistory[i])
-					}
-				}
+		slot.mount.Click(func() {
+			if i < len(a.mountHistory) {
+				go a.ExecuteMount(a.mountHistory[i])
 			}
-		}()
+		})
+		slot.connect.Click(func() {
+			if i < len(a.mountHistory) {
+				go a.ExecuteConnect(a.mountHistory[i])
+			}
+		})
 	}
 }
