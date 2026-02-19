@@ -1,7 +1,7 @@
 package main
 
-// On macOS set terminal in ~/.config/mountly/config.json.
-// Example: "terminal": "open -a iTerm"
-// Note: the ssh command is appended as arguments, so the terminal must support
-// receiving a command (e.g. iTerm: "open -a iTerm --args -e").
-const defaultTerminal = ""
+// The ssh command is appended as arguments, so the terminal must support it.
+// kitty and alacritty work out of the box with these defaults.
+// For Terminal.app or iTerm2, configure manually in
+// ~/.config/daktela-gui-tools/config.json.
+const defaultTerminal = "kitty --"

@@ -18,12 +18,12 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
-func mountlySocketPath() string {
+func socketPath() string {
 	dir := os.Getenv("XDG_RUNTIME_DIR")
 	if dir == "" {
-		dir = fmt.Sprintf("/tmp/mountly-%d", os.Getuid())
+		dir = fmt.Sprintf("/tmp/daktela-gui-tools-%d", os.Getuid())
 	}
-	return dir + "/mountly.sock"
+	return dir + "/daktela-gui-tools.sock"
 }
 
 func main() {
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	if startupCmd != "" {
-		conn, err := net.Dial("unix", mountlySocketPath())
+		conn, err := net.Dial("unix", socketPath())
 		if err == nil {
 			conn.Write([]byte(startupCmd))
 			conn.Close()

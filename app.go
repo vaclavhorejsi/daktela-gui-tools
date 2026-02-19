@@ -53,7 +53,7 @@ func (a *App) startup(ctx context.Context) {
 // listenSocket naslouchá na Unix socketu — fallback pro GNOME Wayland.
 // GNOME custom shortcuts: mountly --show-mount / mountly --show-connect
 func (a *App) listenSocket() {
-	path := mountlySocketPath()
+	path := socketPath()
 	os.Remove(path)
 	listener, err := net.Listen("unix", path)
 	if err != nil {
@@ -87,7 +87,7 @@ func (a *App) configDir() string {
 	if err != nil {
 		d = filepath.Join(os.Getenv("HOME"), ".config")
 	}
-	return filepath.Join(d, "mountly")
+	return filepath.Join(d, "daktela-gui-tools")
 }
 
 func (a *App) configFilePath() string {
@@ -95,8 +95,9 @@ func (a *App) configFilePath() string {
 }
 
 func (a *App) loadConfig() {
+	home, _ := os.UserHomeDir()
 	a.config = Config{
-		MountBase: "/home/horejsi/Projects/Daktela/",
+		MountBase: filepath.Join(home, "Projects", "Daktela"),
 		Terminal:  defaultTerminal,
 	}
 	data, err := os.ReadFile(a.configFilePath())
