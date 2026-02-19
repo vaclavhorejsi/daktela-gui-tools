@@ -1,0 +1,279 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    background-color: rgb(27, 38, 54);
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", sans-serif;
+    font-size: 14px;
+}
+
+#app {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-row {
+    display: flex;
+}
+
+.input-row input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+    font-family: "Courier New", monospace;
+}
+
+.input-row input:focus {
+    border-color: rgba(100, 160, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.11);
+}
+
+.output-box {
+    min-height: 60px;
+    max-height: 100px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #a0d0a0;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    word-break: break-all;
+}
+
+.output-box.error {
+    color: #ff7070;
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+button {
+    padding: 7px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.15s;
+}
+
+#btn-execute {
+    background-color: #3d7eff;
+    color: white;
+}
+
+#btn-execute:hover {
+    background-color: #5590ff;
+}
+
+#btn-close {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ccc;
+}
+
+#btn-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Mount page */
+
+#page-mount {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+}
+
+#page-mount h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.mount-input-wrap {
+    position: relative;
+}
+
+.mount-input-wrap input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+    font-family: "Courier New", monospace;
+}
+
+.mount-input-wrap input:focus {
+    border-color: rgba(100, 160, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.11);
+}
+
+.mount-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgb(27, 38, 54);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    z-index: 10;
+    display: none;
+}
+
+.mount-suggestion {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    color: #e0e0e0;
+    height: 33px;
+    display: flex;
+    align-items: center;
+}
+
+.mount-suggestion:hover,
+.mount-suggestion.active {
+    background: rgba(61, 126, 255, 0.3);
+}
+
+.mount-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+#btn-mount {
+    background-color: #3d7eff;
+    color: white;
+}
+
+#btn-mount:hover {
+    background-color: #5590ff;
+}
+
+#btn-mount-close {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ccc;
+}
+
+#btn-mount-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Connect SSH page */
+
+#page-connect {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+}
+
+#page-connect h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+#btn-connect {
+    background-color: #3d7eff;
+    color: white;
+}
+
+#btn-connect:hover {
+    background-color: #5590ff;
+}
+
+#btn-connect-close {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ccc;
+}
+
+#btn-connect-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Result page */
+
+#page-result {
+    display: none;
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+    padding: 16px 24px;
+    gap: 12px;
+}
+
+.result-output {
+    flex: 1;
+    min-height: 0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #a0d0a0;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    word-break: break-all;
+}
+
+.result-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#btn-result-ok {
+    background-color: #3d7eff;
+    color: white;
+}
+
+#btn-result-ok:hover {
+    background-color: #5590ff;
+}
+
+#btn-result-ok:disabled {
+    background-color: rgba(61, 126, 255, 0.4);
+    cursor: not-allowed;
+}
