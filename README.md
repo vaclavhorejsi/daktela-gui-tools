@@ -201,6 +201,17 @@ The output of all commands is displayed in the application window.
 
 ```
 ~/.config/daktela-gui-tools/
-├── config.json    # configuration (mount_base, terminal)
-└── history.json   # history of the last 50 servers
+├── config.json       # configuration (mount_base, terminal, remote_mount_path)
+├── history.json      # history of the last 50 servers (auto-managed)
+└── autocomplete.txt  # customer names for autocomplete, one per line (manually edited)
 ```
+
+`autocomplete.txt` is created automatically as an empty file on first launch. Edit it manually to add customer names — the application never modifies it:
+
+```
+customer-a
+customer-b
+seznam
+```
+
+Autocomplete suggestions in the Mount and Connect SSH dialogs combine both sources: history entries appear first (most recently used), followed by names from `autocomplete.txt` that are not already in the history.
