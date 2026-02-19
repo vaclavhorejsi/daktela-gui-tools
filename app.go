@@ -108,9 +108,6 @@ func (a *App) loadConfig() {
 		return
 	}
 	json.Unmarshal(data, &a.config)
-	if !strings.HasSuffix(a.config.MountBase, "/") {
-		a.config.MountBase += "/"
-	}
 }
 
 func (a *App) saveConfigFile() {
@@ -181,7 +178,7 @@ func (a *App) SaveMount(name string) {
 // ── Mount ─────────────────────────────────────────────────────────────────────
 
 func (a *App) RunMount(name string) string {
-	base := a.config.MountBase + name
+	base := filepath.Join(a.config.MountBase, name)
 	var sb strings.Builder
 
 	run := func(args ...string) {
