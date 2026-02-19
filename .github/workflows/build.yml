@@ -91,10 +91,13 @@ jobs:
       - name: Build
         run: wails build -o daktela-gui-tools-darwin
 
+      - name: Zip app bundle
+        run: ditto -c -k --keepParent build/bin/daktela-gui-tools.app build/bin/daktela-gui-tools-darwin.zip
+
       - uses: actions/upload-artifact@v4
         with:
           name: daktela-gui-tools-macos
-          path: build/bin/daktela-gui-tools-darwin
+          path: build/bin/daktela-gui-tools-darwin.zip
 
   # ── GitHub Release (jen při tagu v*) ──────────────────────────────────────
   release:
@@ -115,4 +118,4 @@ jobs:
           files: |
             artifacts/daktela-gui-tools-linux-x11/daktela-gui-tools
             artifacts/daktela-gui-tools-linux-wayland/daktela-gui-tools-wayland
-            artifacts/daktela-gui-tools-macos/daktela-gui-tools-darwin
+            artifacts/daktela-gui-tools-macos/daktela-gui-tools-darwin.zip
