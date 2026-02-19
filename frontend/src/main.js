@@ -1,5 +1,5 @@
 import './style.css';
-import {ExecuteCommand, HideWindow, GetMountHistory, SaveMount, RunMount, ExecuteConnect} from '../wailsjs/go/main/App';
+import {ExecuteCommand, HideWindow, GetMountHistory, GetCustomers, SaveMount, RunMount, ExecuteConnect} from '../wailsjs/go/main/App';
 
 document.querySelector('#app').innerHTML = `
     <div class="container" id="page-execute">
@@ -162,15 +162,24 @@ function makeAutocomplete(inputEl, suggestionsEl, getHistory, onSelect) {
 const mountInput      = document.getElementById('mount-input');
 const mountSuggestEl  = document.getElementById('mount-suggestions');
 let mountHistory = [];
+let allSuggestions = [];
+
+function mergeSuggestions(history, customers) {
+    const seen = new Set(history);
+    const extra = customers.filter(c => !seen.has(c));
+    return [...history, ...extra];
+}
 
 const mountAC = makeAutocomplete(
     mountInput, mountSuggestEl,
-    () => mountHistory,
+    () => allSuggestions,
     (name) => { if (name) doMount(name); }
 );
 
 async function showMountPage() {
-    mountHistory = await GetMountHistory();
+    const [history, customers] = await Promise.all([GetMountHistory(), GetCustomers()]);
+    mountHistory = history;
+    allSuggestions = mergeSuggestions(history, customers);
     pageExecEl.style.display    = 'none';
     pageConnectEl.style.display = 'none';
     pageResultEl.style.display  = 'none';
@@ -202,12 +211,14 @@ const connectSuggestEl = document.getElementById('connect-suggestions');
 
 const connectAC = makeAutocomplete(
     connectInput, connectSuggestEl,
-    () => mountHistory,
+    () => allSuggestions,
     (name) => { if (name) doConnect(name); }
 );
 
 async function showConnectPage() {
-    mountHistory = await GetMountHistory();
+    const [history, customers] = await Promise.all([GetMountHistory(), GetCustomers()]);
+    mountHistory = history;
+    allSuggestions = mergeSuggestions(history, customers);
     pageExecEl.style.display    = 'none';
     pageMountEl.style.display   = 'none';
     pageResultEl.style.display  = 'none';

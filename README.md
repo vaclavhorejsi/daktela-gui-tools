@@ -19,6 +19,19 @@ A GUI tool for managing Daktela servers — quickly mount remote directories via
 - `fusermount` (part of the `fuse` or `fuse3` package)
 - GTK 3 + WebKitGTK (see build instructions below)
 
+> **KDE users:** GTK and WebKitGTK are not installed by default on KDE. Install them manually:
+> ```bash
+> # Fedora / openSUSE
+> sudo dnf install webkit2gtk4.0
+>
+> # Arch Linux
+> sudo pacman -S webkit2gtk
+>
+> # Ubuntu / Debian
+> sudo apt install libwebkit2gtk-4.0-dev
+> ```
+> Also set `"terminal": "konsole -e"` in your `config.json` (see [Configuration](#configuration)).
+
 ### macOS
 - `sshfs` — easiest via [Homebrew](https://brew.sh): `brew install sshfs`
 - Xcode Command Line Tools: `xcode-select --install`

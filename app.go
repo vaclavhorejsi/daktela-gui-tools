@@ -125,6 +125,33 @@ func (a *App) historyFilePath() string {
 	return filepath.Join(a.configDir(), "history.json")
 }
 
+func (a *App) autocompleteFilePath() string {
+	return filepath.Join(a.configDir(), "autocomplete.txt")
+}
+
+func (a *App) GetCustomers() []string {
+	path := a.autocompleteFilePath()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			os.MkdirAll(filepath.Dir(path), 0755)
+			os.WriteFile(path, []byte{}, 0644)
+		}
+		return []string{}
+	}
+	if len(strings.TrimSpace(string(data))) == 0 {
+		return []string{}
+	}
+	var customers []string
+	for _, line := range strings.Split(string(data), "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			customers = append(customers, line)
+		}
+	}
+	return customers
+}
+
 func (a *App) loadMountHistory() {
 	data, err := os.ReadFile(a.historyFilePath())
 	if err != nil {
