@@ -1,76 +1,161 @@
 package main
 
+/*
+#cgo CFLAGS: -x objective-c
+#cgo LDFLAGS: -framework Cocoa
+
+#import <Cocoa/Cocoa.h>
+#include <stdlib.h>
+
+extern void goTrayCallback(int tag);
+
+@interface TrayTarget : NSObject
+- (void)itemClicked:(NSMenuItem*)item;
+@end
+
+@implementation TrayTarget
+- (void)itemClicked:(NSMenuItem*)item {
+	goTrayCallback((int)[item tag]);
+}
+@end
+
+static TrayTarget* _target;
+static NSStatusItem* _statusItem;
+static NSMutableArray<NSMenuItem*>* _historyItems;
+
+void trayInit(const unsigned char* png, int pngLen) {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		_target = [TrayTarget new];
+		_historyItems = [NSMutableArray array];
+
+		_statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
+
+		NSData* d = [NSData dataWithBytes:png length:pngLen];
+		NSImage* img = [[NSImage alloc] initWithData:d];
+		img.size = NSMakeSize(18, 18);
+		img.template = YES;
+		_statusItem.button.image = img;
+		_statusItem.button.toolTip = @"Mountly";
+
+		NSMenu* m = [NSMenu new];
+
+		void (^add)(NSString*, int) = ^(NSString* title, int tag) {
+			NSMenuItem* it = [[NSMenuItem alloc] initWithTitle:title action:@selector(itemClicked:) keyEquivalent:@""];
+			it.target = _target;
+			it.tag = tag;
+			[m addItem:it];
+		};
+
+		add(@"Connect SSH  (Ctrl+Shift+S)", 1);
+		add(@"Mount  (Ctrl+Shift+D)", 2);
+		[m addItem:[NSMenuItem separatorItem]];
+
+		for (int i = 0; i < 10; i++) {
+			NSMenuItem* parent = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
+			parent.hidden = YES;
+
+			NSMenu* sub = [NSMenu new];
+
+			NSMenuItem* mountItem = [[NSMenuItem alloc] initWithTitle:@"Mount" action:@selector(itemClicked:) keyEquivalent:@""];
+			mountItem.target = _target;
+			mountItem.tag = 100 + i;
+			[sub addItem:mountItem];
+
+			NSMenuItem* connItem = [[NSMenuItem alloc] initWithTitle:@"Connect SSH" action:@selector(itemClicked:) keyEquivalent:@""];
+			connItem.target = _target;
+			connItem.tag = 200 + i;
+			[sub addItem:connItem];
+
+			parent.submenu = sub;
+			[m addItem:parent];
+			[_historyItems addObject:parent];
+		}
+
+		[m addItem:[NSMenuItem separatorItem]];
+		add(@"Exit", 99);
+
+		_statusItem.menu = m;
+	});
+}
+
+void trayUpdateHistory(const char** titles, int count) {
+	NSMutableArray* arr = [NSMutableArray array];
+	for (int i = 0; i < count; i++) {
+		[arr addObject:[NSString stringWithUTF8String:titles[i]]];
+	}
+	dispatch_async(dispatch_get_main_queue(), ^{
+		for (NSUInteger i = 0; i < [_historyItems count]; i++) {
+			NSMenuItem* p = _historyItems[i];
+			if ((int)i < count) {
+				p.title = arr[i];
+				p.hidden = NO;
+			} else {
+				p.hidden = YES;
+			}
+		}
+	});
+}
+*/
+import "C"
 import (
-	"github.com/energye/systray"
+	"unsafe"
+
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const maxHistorySlots = 10
 
-type historySlot struct {
-	parent  *systray.MenuItem
-	mount   *systray.MenuItem
-	connect *systray.MenuItem
+var _trayApp *App
+
+//export goTrayCallback
+func goTrayCallback(tag C.int) {
+	a := _trayApp
+	if a == nil {
+		return
+	}
+	t := int(tag)
+	switch {
+	case t == 1:
+		go a.ShowConnectDialog()
+	case t == 2:
+		go a.ShowMountDialog()
+	case t == 99:
+		runtime.Quit(a.ctx)
+	case t >= 100 && t < 110:
+		idx := t - 100
+		if idx < len(a.mountHistory) {
+			go a.ExecuteMount(a.mountHistory[idx])
+		}
+	case t >= 200 && t < 210:
+		idx := t - 200
+		if idx < len(a.mountHistory) {
+			go a.ExecuteConnect(a.mountHistory[idx])
+		}
+	}
 }
 
 func (a *App) setupTray() {
-	go systray.Run(a.onTrayReady, nil)
-}
+	_trayApp = a
+	C.trayInit((*C.uchar)(unsafe.Pointer(&icon[0])), C.int(len(icon)))
 
-func (a *App) onTrayReady() {
-	systray.SetIcon(icon)
-	systray.SetTooltip("Mountly")
-
-	mConnect := systray.AddMenuItem("Connect SSH  (Ctrl+Shift+S)", "Open Connect SSH dialog")
-	mMount := systray.AddMenuItem("Mount  (Ctrl+Shift+D)", "Open Mount dialog")
-	systray.AddSeparator()
-
-	slots := make([]historySlot, maxHistorySlots)
-	for i := range slots {
-		slots[i].parent = systray.AddMenuItem("", "")
-		slots[i].parent.Hide()
-		slots[i].mount = slots[i].parent.AddSubMenuItem("Mount", "")
-		slots[i].connect = slots[i].parent.AddSubMenuItem("Connect SSH", "")
-	}
-
-	systray.AddSeparator()
-	mExit := systray.AddMenuItem("Exit", "Exit Mountly")
-
-	// Callback used by SaveMount to refresh visible history items.
 	a.trayUpdate = func() {
-		limit := len(a.mountHistory)
+		history := a.mountHistory
+		limit := len(history)
 		if limit > maxHistorySlots {
 			limit = maxHistorySlots
 		}
-		for i := range slots {
-			if i < limit {
-				slots[i].parent.SetTitle(a.mountHistory[i])
-				slots[i].parent.Show()
-			} else {
-				slots[i].parent.Hide()
-			}
+		cstrs := make([]*C.char, limit)
+		for i, s := range history[:limit] {
+			cstrs[i] = C.CString(s)
+		}
+		var ptr **C.char
+		if limit > 0 {
+			ptr = &cstrs[0]
+		}
+		C.trayUpdateHistory(ptr, C.int(limit))
+		for _, cs := range cstrs {
+			C.free(unsafe.Pointer(cs))
 		}
 	}
 	a.trayUpdate()
-
-	// Top-level buttons.
-	mConnect.Click(func() { go a.ShowConnectDialog() })
-	mMount.Click(func() { go a.ShowMountDialog() })
-	mExit.Click(func() { runtime.Quit(a.ctx) })
-
-	// History slot handlers.
-	for i := range slots {
-		i := i
-		slot := &slots[i]
-		slot.mount.Click(func() {
-			if i < len(a.mountHistory) {
-				go a.ExecuteMount(a.mountHistory[i])
-			}
-		})
-		slot.connect.Click(func() {
-			if i < len(a.mountHistory) {
-				go a.ExecuteConnect(a.mountHistory[i])
-			}
-		})
-	}
 }
